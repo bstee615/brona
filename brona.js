@@ -26,8 +26,8 @@ bgSprite.src = imagePath("forest.png");
 // Update stuff
 canvas.addEventListener("click", function(ev) {
     targetPosition = {
-        x: ev.offsetX - w/2,
-        y: ev.offsetY - h/2
+        x: ev.offsetX - w*tilesize/2,
+        y: ev.offsetY - h*tilesize/2
     };
 });
 
