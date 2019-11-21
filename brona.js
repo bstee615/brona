@@ -33,7 +33,7 @@ function renderLoopStep() {
     }
 }
 
-var targetPosition = {
+let targetPosition = {
     x: null,
     y: null
 };
@@ -47,21 +47,30 @@ canvas.addEventListener("click", function(ev) {
 
 function movementLoopStep() {
     const speed = 10;
+    const delta = {
+        x: 0,
+        y: 0
+    };
     if (targetPosition.x != null) {
-        let xSpeed = speed * Math.sign(targetPosition.x - x);
-        if (Math.abs(targetPosition.x - x) < speed) {
-            xSpeed = targetPosition.x - x;
-            targetPosition.x = null;
-        }
-        x += xSpeed;
+        delta.x = targetPosition.x - x;
     }
     if (targetPosition.y != null) {
-        let ySpeed = speed * Math.sign(targetPosition.y - y);
-        if (Math.abs(targetPosition.y - y) < speed) {
-            ySpeed = targetPosition.y - y;
-            targetPosition.y = null;
-        }
-        y += ySpeed;
+        delta.y = targetPosition.y - y;
+    }
+
+    const magnitude = Math.sqrt(delta.x*delta.x + delta.y*delta.y);
+    if (magnitude > 0) {
+        const deltaUnit = {
+            x: delta.x / magnitude,
+            y: delta.y / magnitude
+        };
+        const netDelta = {
+            x: deltaUnit.x * speed,
+            y: deltaUnit.y * speed
+        };
+    
+        x += netDelta.x;
+        y += netDelta.y;
     }
 }
 
