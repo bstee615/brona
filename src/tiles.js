@@ -31,10 +31,24 @@ function loadSprite(row, col) {
 export function loadTile(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
     loadSprite(tilerow, tilecol);
 
-    tiles.push(new TileObject(x, y, w, h, 
+    const tile = new TileObject(x, y, w, h, 
         tilerow,
         tilecol,
-        name));
+        name);
+
+    tiles.push(tile);
+
+    return tile;
+}
+
+export let colliders = [];
+
+export function loadObject(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1, collider=false) {
+    const tile = loadTile(tilerow, tilecol, name, x, y, w, h);
+
+    if (collider) {
+        colliders.push(tile);
+    }
 }
 
 class TileObject extends Object {
