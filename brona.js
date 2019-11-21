@@ -8,7 +8,7 @@ function imagePath(filepath) {
 let bronaSprite = new Image();
 let bronaSpriteLoaded = false;
 let x = 50, y = 50;
-let w = 75, h = 75;
+let w = canvas.width/12, h = canvas.height/12;
 bronaSprite.onload = function() {
   bronaSpriteLoaded = true;
 };
@@ -40,8 +40,8 @@ let targetPosition = {
 
 canvas.addEventListener("click", function(ev) {
     targetPosition = {
-        x: ev.clientX,
-        y: ev.clientY
+        x: ev.offsetX - w/2,
+        y: ev.offsetY - h/2
     };
 });
 
