@@ -95,19 +95,19 @@ function loadTile(row, col, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
     }
 
     const tilewidth = 32;
+    tile.name = name;
+    tile.x = x;
+    tile.y = y;
+    tile.w = w;
+    tile.h = h;
+    tile.srcW = tilewidth;
+    tile.srcH = tilewidth;
+    tile.srcX = col * tilewidth;
+    tile.srcY = row * tilewidth;
 
     tile.img = new Image();
     tile.img.onload = function() {
         tile.loaded = true;
-        tile.name = name;
-        tile.x = x;
-        tile.y = y;
-        tile.w = w;
-        tile.h = h;
-        tile.srcW = tilewidth;
-        tile.srcH = tilewidth;
-        tile.srcX = col * tilewidth;
-        tile.srcY = row * tilewidth;
     };
     tile.img.src = imagePath("forest_tiles.png");
 
@@ -115,6 +115,7 @@ function loadTile(row, col, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
 }
 
 loadTile(0, 13, "Mushroom");
+loadTile(0, 13, "Mushroom", 0, 1);
 loadTile(6, 0, "Pine_1", 2, 4);
 loadTile(7, 0, "Pine_2", 2, 5);
 loadTile(6, 1, "Pine_3", 3, 4);
