@@ -64,10 +64,18 @@ function movementLoopStep() {
             x: delta.x / magnitude,
             y: delta.y / magnitude
         };
-        const netDelta = {
+        let netDelta = {
             x: deltaUnit.x * speed,
             y: deltaUnit.y * speed
         };
+
+        if (Math.sqrt(delta.x*delta.x + delta.y*delta.y) <= speed) {
+            // Within small distance of target -
+            // correct to exact and reset targetPosition.
+            netDelta = delta;
+            targetPosition.x = null;
+            targetPosition.y = null;
+        }
     
         x += netDelta.x;
         y += netDelta.y;
