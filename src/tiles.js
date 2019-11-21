@@ -1,4 +1,4 @@
-import { gameToPx } from "./rendering";
+import Object from "./object";
 import Sprite from "./sprite";
 
 // Tile stuff
@@ -15,34 +15,42 @@ for (let row = 0; row < 12; row ++) {
 // Holds instances of the tiles
 export let tiles = [];
 
-function loadTile(row, col, name) {
+function loadSprite(row, col) {
     if (tileSprites[row][col].loaded) {
         return;
     }
 
     const tilewidth = 32;
 
-    tileSprites[row][col] = new Sprite("forest_tiles.png", name, 
+    tileSprites[row][col] = new Sprite("forest_tiles.png", 
     col * tilewidth, row * tilewidth,
     tilewidth, tilewidth,
         );
 }
 
-export function loadSprite(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
-    loadTile(tilerow, tilecol, name);
+export function loadTile(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
+    loadSprite(tilerow, tilecol);
 
-    tiles.push({
+    tiles.push(new TileObject(x, y, w, h, 
         tilerow,
         tilecol,
-        name,
-        x,
-        y,
-        w,
-        h,
-        getSprite: function() {
-            return tileSprites[this.tilerow][this.tilecol];
-        }
-    });
+        name));
+}
+
+class TileObject extends Object {
+    constructor(x, y, w, h, tilerow, tilecol, name) {
+        super(x, y, w, h);
+
+        this.tilerow = tilerow;
+        this.tilecol = tilecol;
+
+        this.name = name;
+    }
+
+    sprite() {
+        loadSprite(this.tilerow, this.tilecol);
+        return tileSprites[this.tilerow][this.tilecol];
+    }
 }
 
 // export function drawSprite(ctx, tile) {

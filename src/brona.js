@@ -1,16 +1,6 @@
-import {gameToPx} from "./rendering";
-import Sprite from "./sprite";
+import Sprite, {SpriteObject} from "./sprite";
 
-export const obj = {
-    x: 3,
-    y: 4,
-    w: 1,
-    h: 1,
-    sprite: new Sprite("brona.png", "Brona"),
-    draw: function(ctx) {
-        this.sprite.draw(ctx, gameToPx(this.x), gameToPx(this.y), gameToPx(this.w), gameToPx(this.h))
-    }
-}
+export const obj = new SpriteObject(3, 4, 1, 1, new Sprite("brona.png", "Brona"));
 
 import * as rendering from "./rendering";
 

@@ -4,7 +4,7 @@ function imagePath(filepath) {
 
 export default class Sprite {
 
-    constructor(filepath, name = "unnnamed", srcX = null, srcY = null, srcW = null, srcH = null) {
+    constructor(filepath, srcX = null, srcY = null, srcW = null, srcH = null) {
         this.loaded = false;
         
         if (filepath) {
@@ -14,8 +14,6 @@ export default class Sprite {
                 this.loaded = true;
             };
         }
-        
-        this.name = name;
 
         this.srcX = srcX;
         this.srcY = srcY;
@@ -33,5 +31,19 @@ export default class Sprite {
         else {
             ctx.drawImage(this.img, x, y, w, h);
         }
+    }
+}
+
+import Object from "./object";
+
+export class SpriteObject extends Object {
+    constructor(x, y, w, h, sprite) {
+        super(x, y, w, h);
+
+        this.img = sprite;
+    }
+
+    sprite() {
+        return this.img;
     }
 }
