@@ -1,20 +1,34 @@
 import Sprite, {SpriteObject} from "./sprite";
+import * as control from "./control";
+import {canvas, pxToGame} from "./rendering";
 
 export const obj = new SpriteObject(3, 4, 1, 1, new Sprite("brona.png", "Brona"));
 
-import * as rendering from "./rendering";
-
-let targetPosition = {
+export let targetPosition = {
     x: null,
     y: null
 };
 
-// Update stuff
-rendering.canvas.addEventListener("click", function(ev) {
+function target(x, y) {
     targetPosition = {
-        x: rendering.pxToGame(ev.offsetX) - obj.w/2,
-        y: rendering.pxToGame(ev.offsetY) - obj.h/2
+        x: pxToGame(x) - obj.w/2,
+        y: pxToGame(y) - obj.h/2
     };
+}
+
+export function cancelTargetPosition() {
+    targetPosition.x = null;
+    targetPosition.y = null;
+}
+
+canvas.addEventListener("mousedown", function() {
+    target(control.mousePosition.x, control.mousePosition.y);
+});
+
+canvas.addEventListener("mousemove", function() {
+    if (control.mousedown) {
+        target(control.mousePosition.x, control.mousePosition.y);
+    }
 });
 
 export function movementLoopStep() {
@@ -45,8 +59,7 @@ export function movementLoopStep() {
             // Within small distance of target -
             // correct to exact and reset targetPosition.
             netDelta = delta;
-            targetPosition.x = null;
-            targetPosition.y = null;
+            cancelTargetPosition();
         }
     
         obj.x += netDelta.x;
