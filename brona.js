@@ -70,36 +70,33 @@ function movementLoopStep() {
 
 // Tile stuff
 // 12x16 tiles
-let tileInfo = [];
+let tiles = [];
 for (let row = 0; row < 12; row ++) {
-    tileInfo.push([]);
+    tiles.push([]);
     for (let col = 0; col < 16; col ++) {
-        tileInfo[row].push({
+        tiles[row].push({
             loaded: false,
             name: "N/A",
             img: null,
             srcX: 0,
             srcY: 0,
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0
+            srcW: 0,
+            srcH: 0
         });
     }
 }
 
-function loadTile(row, col, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
-    let tile = tileInfo[row][col];
+// Holds instances of the tiles
+let sprites = [];
+
+function loadTile(row, col) {
+    let tile = tiles[row][col];
     if (tile.loaded) {
         return;
     }
 
     const tilewidth = 32;
     tile.name = name;
-    tile.x = x;
-    tile.y = y;
-    tile.w = w;
-    tile.h = h;
     tile.srcW = tilewidth;
     tile.srcH = tilewidth;
     tile.srcX = col * tilewidth;
@@ -111,15 +108,29 @@ function loadTile(row, col, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
     };
     tile.img.src = imagePath("forest_tiles.png");
 
-    tileInfo[row][col] = tile;
+    tiles[row][col] = tile;
 }
 
-loadTile(0, 13, "Mushroom");
-loadTile(0, 13, "Mushroom", 0, 1);
-loadTile(6, 0, "Pine_1", 2, 4);
-loadTile(7, 0, "Pine_2", 2, 5);
-loadTile(6, 1, "Pine_3", 3, 4);
-loadTile(7, 1, "Pine_4", 3, 5);
+function loadSprite(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
+    loadTile(tilerow, tilecol);
+
+    sprites.push({
+        tilerow,
+        tilecol,
+        name,
+        x,
+        y,
+        w,
+        h
+    });
+}
+
+loadSprite(0, 13, "Mushroom");
+loadSprite(0, 13, "Mushroom", 0, 1);
+loadSprite(6, 0, "Pine_1", 2, 4);
+loadSprite(7, 0, "Pine_2", 2, 5);
+loadSprite(6, 1, "Pine_3", 3, 4);
+loadSprite(7, 1, "Pine_4", 3, 5);
 
 function renderLoopStep() {
     // Draw background image
@@ -127,18 +138,17 @@ function renderLoopStep() {
         ctx.drawImage(bgSprite, 0, 0, canvas.width, canvas.height);
     }
 
+    // Draw loaded tiles
+    for (const sprite of sprites) {
+        const tile = tiles[sprite.tilerow][sprite.tilecol];
+        if (tile.loaded) {
+            ctx.drawImage(tile.img, tile.srcX, tile.srcY, tile.srcW, tile.srcH, sprite.x * tilesize, sprite.y * tilesize, sprite.w * tilesize, sprite.h * tilesize);
+        }
+    }
+
     // Draw Brona
     if (bronaSpriteLoaded) {
         ctx.drawImage(bronaSprite, x, y, w * tilesize, h * tilesize);
-    }
-
-    // Draw loaded tiles
-    for (const row of tileInfo) {
-        for (const tile of row) {
-            if (tile.loaded) {
-                ctx.drawImage(tile.img, tile.srcX, tile.srcY, tile.srcW, tile.srcH, tile.x * tilesize, tile.y * tilesize, tile.w * tilesize, tile.h * tilesize);
-            }
-        }
     }
 }
 
