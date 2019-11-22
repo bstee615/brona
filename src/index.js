@@ -38,8 +38,8 @@ function renderLoopStep() {
 }
 
 function gameLoop() {
-    renderLoopStep();
     brona.movementLoopStep();
+    renderLoopStep();
 
     // Loop forever
     window.requestAnimationFrame(gameLoop);

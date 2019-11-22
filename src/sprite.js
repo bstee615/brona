@@ -10,8 +10,9 @@ export default class Sprite {
         if (filepath) {
             this.img = new Image();
             this.img.src = imagePath(filepath);
+            let self = this;
             this.img.onload = function() {
-                this.loaded = true;
+                self.loaded = true;
             };
         }
 

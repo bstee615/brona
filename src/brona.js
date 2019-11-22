@@ -72,27 +72,66 @@ function correctCollisions(delta) {
         const ctop = c.y;
         const cbot = c.y + c.h;
 
-        // check colinear vertically
-        if ((bleft > cleft && bleft < cright ||
-                bright > cleft && bright < cright) &&
-            (btop > ctop && btop < cbot ||
-                bbot > ctop && bbot < cbot)) {
+        // Check collision
+        if (bleft > cright || bright < cleft ||
+            btop > cbot || bbot < ctop) {
+                continue;
+        }
 
-            // Collides somewhere
+        // There is some collision
+        const bcenter = {
+            x: (bleft + bright / 2),
+            y: (bbot + btop / 2)
+        };
+        const ccenter = {
+            x: (cleft + cright / 2),
+            y: (cbot + ctop / 2)
+        };
 
-            // Assume bottom right
-            if (Math.abs(cright - bleft) < Math.abs(cbot - btop)) {
-                // correct to the right
-                newDelta.x = cright - obj.x;
+        const direction = {
+            x: Math.sign(bcenter.x - ccenter.x),
+            y: Math.sign(bcenter.y - ccenter.y)
+        };
+
+        if (direction.x > 0) {
+            if (direction.y > 0) {
+                if (Math.abs(bleft - cright) < Math.abs(btop - cbot)) {
+                    delta.x = cright + 0.001 - obj.x;
+                }
+                else {
+                    delta.y = cbot + 0.001 - obj.y;
+                }
             }
             else {
-                // correct to the bottom
-                newDelta.y = cbot - obj.y;
+                if (Math.abs(bleft - cright) < Math.abs(bbot - ctop)) {
+                    delta.x = cright + 0.001 - obj.x;
+                }
+                else {
+                    delta.y = ctop - 0.001 - (obj.y + obj.h);
+                }
+            }
+        }
+        else {
+            if (direction.y > 0) {
+                if (Math.abs(bright - cleft) < Math.abs(btop - cbot)) {
+                    delta.x = cleft - 0.001 - (obj.x + obj.w);
+                }
+                else {
+                    delta.y = cbot + 0.001 - obj.y;
+                }
+            }
+            else {
+                if (Math.abs(bright - cleft) < Math.abs(bbot - ctop)) {
+                    delta.x = cleft - 0.001 - (obj.x + obj.w);
+                }
+                else {
+                    delta.y = ctop - 0.001 - (obj.y + obj.h);
+                }
             }
         }
     }
 
-    return newDelta;
+    return delta;
 }
 
 import {ctx, gameToPx} from "./rendering";
@@ -130,34 +169,31 @@ export function movementLoopStep() {
 
         let newDelta = correctCollisions(netDelta);
 
-        if (newDelta.x) {
-            netDelta.x = newDelta.x;
-        }
-        if (newDelta.y) {
-            netDelta.y = newDelta.y;
+        if (newDelta.x || newDelta.y) {
+            netDelta = newDelta;
         }
 
-        ctx.beginPath();
-        ctx.rect(gameToPx(obj.x), gameToPx(obj.y), gameToPx(obj.w), gameToPx(obj.h));
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "orange";
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.rect(gameToPx(obj.x), gameToPx(obj.y), gameToPx(obj.w), gameToPx(obj.h));
+        // ctx.lineWidth = 3;
+        // ctx.strokeStyle = "orange";
+        // ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(gameToPx(obj.x + obj.w/2), gameToPx(obj.y + obj.h/2));
-        ctx.lineTo(gameToPx(obj.x + obj.w/2 + netDelta.x), gameToPx(obj.y + obj.h/2 + netDelta.y));
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "lime";
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(gameToPx(obj.x + obj.w/2), gameToPx(obj.y + obj.h/2));
+        // ctx.lineTo(gameToPx(obj.x + obj.w/2 + netDelta.x), gameToPx(obj.y + obj.h/2 + netDelta.y));
+        // ctx.lineWidth = 3;
+        // ctx.strokeStyle = "lime";
+        // ctx.stroke();
         
-        if (targetPosition.x > 0 && targetPosition.y > 0) {
-            ctx.beginPath();
-            ctx.moveTo(gameToPx(obj.x + obj.w/2), gameToPx(obj.y + obj.h/2));
-            ctx.lineTo(gameToPx(targetPosition.x), gameToPx(targetPosition.y));
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "red";
-            ctx.stroke();
-        }
+        // if (targetPosition.x > 0 && targetPosition.y > 0) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(gameToPx(obj.x + obj.w/2), gameToPx(obj.y + obj.h/2));
+        //     ctx.lineTo(gameToPx(targetPosition.x), gameToPx(targetPosition.y));
+        //     ctx.lineWidth = 1;
+        //     ctx.strokeStyle = "red";
+        //     ctx.stroke();
+        // }
 
         obj.x += netDelta.x;
         obj.y += netDelta.y;
