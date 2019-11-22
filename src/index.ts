@@ -25,8 +25,11 @@ tiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
 const bg = new Sprite("forest.png");
 
 function renderLoopStep() {
+    // Clear canvas
+    rendering.ctx.clearRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+    
     // Draw background image
-    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientWidth);
+    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
 
     // Draw loaded tiles
     for (const tile of tiles.tiles) {
@@ -37,11 +40,111 @@ function renderLoopStep() {
     brona.obj.draw(rendering.ctx);
 }
 
+let casting = false;
+
+window.addEventListener("keydown", function(ev) {
+    if (ev.key === "c") {
+        casting = true;
+    }
+});
+
+class Fade {
+    private range: any;
+    private inc: number;
+
+    private currentValue: number;
+    private accelFactor: number;
+    private doneFading: boolean;
+
+    get value() {
+        return this.currentValue;
+    }
+
+    get done() {
+        return this.doneFading;
+    }
+
+    constructor(min, max, inc, accelFactor = 1) {
+        this.range = {
+            min,
+            max
+        };
+        this.inc = inc;
+        this.accelFactor = accelFactor;
+        this.reset();
+    }
+
+    increment() {
+        if (this.doneFading) {
+            return;
+        }
+
+        this.currentValue += this.inc;
+        this.inc = this.inc * this.accelFactor;
+
+        if (this.inc > 0) {
+            if (this.currentValue >= this.range.max) {
+                this.currentValue = this.range.max;
+                this.doneFading = true;
+            }
+        }
+        else {
+            if (this.currentValue <= this.range.min) {
+                this.currentValue = this.range.min;
+                this.doneFading = true;
+            }
+        }
+    }
+    
+    reset() {
+        if (this.inc > 0) {
+            this.currentValue = this.range.min;
+        }
+        else {
+            this.currentValue = this.range.max;
+        }
+        this.doneFading = false;
+    }
+};
+let fade = new Fade(0.2, 0.6, 0.01);
+let timeFade = new Fade(0.05, 1, -0.1, 0.9);
+
+function castingLoop() {
+    brona.movementLoopStep(timeFade.value);
+    timeFade.increment();
+    renderLoopStep();
+    
+    // Fade to black
+    const originalAlpha = rendering.ctx.globalAlpha;
+    rendering.ctx.globalAlpha = fade.value;
+    rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+    rendering.ctx.globalAlpha = originalAlpha;
+
+    fade.increment();
+
+    if (!casting) {
+        fade.reset();
+        window.requestAnimationFrame(gameLoop);
+    }
+    else {
+        window.requestAnimationFrame(castingLoop);
+    }
+}
+
+// Main game loop. Only exits from it to switch to a secondary rendering loop.
 function gameLoop() {
-    brona.movementLoopStep();
+    brona.movementLoopStep(1);
     renderLoopStep();
 
-    // Loop forever
-    window.requestAnimationFrame(gameLoop);
+    if (casting) {
+        setInterval(function() {
+            casting = false;
+        }, 5000);
+        castingLoop();
+    }
+    else {
+        // Loop forever
+        window.requestAnimationFrame(gameLoop);
+    }
 }
 gameLoop();

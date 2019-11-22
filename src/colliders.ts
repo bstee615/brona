@@ -3,7 +3,7 @@ import { Vector } from "./Vector";
 
 export let colliders = [];
 
-export function registerCollider(coll: any) {
+export function registerCollider(coll: Object) {
     colliders.push(coll);
 }
 

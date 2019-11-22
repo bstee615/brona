@@ -73,7 +73,7 @@ function getMovementDelta(delta: Vector): Vector {
     }
 }
 
-export function movementLoopStep() {
+export function movementLoopStep(timeScale) {
     const inputDelta = getInputDelta();
     let movementDelta = getMovementDelta(inputDelta);
 
@@ -86,8 +86,13 @@ export function movementLoopStep() {
     
     const postCollisionDelta = getCollisionDelta(movementDelta);
 
-    obj.x += postCollisionDelta.x;
-    obj.y += postCollisionDelta.y;
+    const timeScaledDelta = {
+        x: postCollisionDelta.x * timeScale,
+        y: postCollisionDelta.y * timeScale,
+    };
+
+    obj.x += timeScaledDelta.x;
+    obj.y += timeScaledDelta.y;
 
     getCollisionDelta(inputDelta);
 }
