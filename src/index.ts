@@ -1,8 +1,8 @@
-import {ctx, canvas} from "./rendering";
+import { ctx, canvas } from "./rendering";
 import * as brona from "./brona";
-import {spellLetters, casting, drawSpell} from "./spells";
+import { spellState } from "./spells";
 
-import {Tilemap} from "./tiles";
+import { Tilemap } from "./tiles";
 import Sprite from "./sprite";
 import { Fader } from "./Fader";
 
@@ -35,7 +35,7 @@ fadeUp.value = 0;
 function renderObjects() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-    
+
     // Draw background image
     bg.draw(ctx, 0, 0, canvas.clientWidth, canvas.clientHeight);
 
@@ -49,12 +49,7 @@ function renderObjects() {
 }
 
 function displaySpellInfo() {
-    if (spellLetters.length > 0) {
-        document.getElementById("spell-display").innerHTML = `Spell: "${spellLetters.join()}"`;
-    }
-    else {
-        document.getElementById("spell-display").innerHTML = "No spell";
-    }
+    document.getElementById("spell-display").innerHTML = spellState.toString();
 }
 
 function drawFade(fader) {
@@ -73,15 +68,14 @@ function mainLoop() {
 
     displaySpellInfo();
 
-    if (casting) {
+    if (spellState.isCasting) {
         drawFade(fadeDown);
 
-        spellLetters.splice(0, spellLetters.length);
+        spellState.resetSpellLetters();
         tileScale.increment();
-            
-        drawSpell();
-    }
-    else {
+
+        spellState.drawSpell();
+    } else {
         drawFade(fadeUp);
 
         fadeDown.reset();
