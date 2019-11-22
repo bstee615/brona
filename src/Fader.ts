@@ -33,8 +33,7 @@ export class Fader {
                 this.currentValue = this.range.max;
                 this.doneFading = true;
             }
-        }
-        else {
+        } else {
             if (this.currentValue <= this.range.min) {
                 this.currentValue = this.range.min;
                 this.doneFading = true;
@@ -44,11 +43,9 @@ export class Fader {
     reset() {
         if (this.inc > 0) {
             this.currentValue = this.range.min;
-        }
-        else {
+        } else {
             this.currentValue = this.range.max;
         }
         this.doneFading = false;
     }
 }
-;

@@ -1,6 +1,6 @@
-import Sprite, {SpriteObject} from "./sprite";
-import {pxToGame, canvas} from "./rendering";
-import {correctCollisions} from "./colliders";
+import Sprite, { SpriteObject } from "./sprite";
+import { pxToGame, canvas } from "./rendering";
+import { correctCollisions } from "./colliders";
 import { Vector } from "./Vector";
 import * as control from "./control";
 
@@ -16,7 +16,13 @@ canvas.addEventListener("mousemove", function() {
     }
 });
 
-export const obj = new SpriteObject(3, 4, 1, 1, new Sprite("brona.png", "Brona"));
+export const obj = new SpriteObject(
+    3,
+    4,
+    1,
+    1,
+    new Sprite("brona.png", "Brona")
+);
 const speed = 0.3;
 
 let targetPosition = {
@@ -26,8 +32,8 @@ let targetPosition = {
 
 export function target(x: number, y: number) {
     targetPosition = {
-        x: pxToGame(x) - obj.w/2,
-        y: pxToGame(y) - obj.h/2
+        x: pxToGame(x) - obj.w / 2,
+        y: pxToGame(y) - obj.h / 2
     };
 }
 
@@ -61,13 +67,13 @@ function getInputDelta(): Vector {
 }
 
 function getMovementDelta(delta: Vector): Vector {
-    const magnitude = Math.sqrt(delta.x*delta.x + delta.y*delta.y);
+    const magnitude = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
     if (magnitude > 0) {
         const unitDelta = {
             x: delta.x / magnitude,
             y: delta.y / magnitude
         };
-    
+
         return {
             x: unitDelta.x * speed,
             y: unitDelta.y * speed
@@ -79,18 +85,21 @@ export function moveBrona(timeScale) {
     const inputDelta = getInputDelta();
     let movementDelta = getMovementDelta(inputDelta);
 
-    if (Math.sqrt(inputDelta.x*inputDelta.x + inputDelta.y*inputDelta.y) <= speed) {
+    if (
+        Math.sqrt(inputDelta.x * inputDelta.x + inputDelta.y * inputDelta.y) <=
+        speed
+    ) {
         // Within small distance of target -
         // correct to exact and reset targetPosition.
         movementDelta = inputDelta;
         cancelTargetPosition();
     }
-    
+
     const postCollisionDelta = getCollisionDelta(movementDelta);
 
     const timeScaledDelta = {
         x: postCollisionDelta.x * timeScale,
-        y: postCollisionDelta.y * timeScale,
+        y: postCollisionDelta.y * timeScale
     };
 
     obj.x += timeScaledDelta.x;

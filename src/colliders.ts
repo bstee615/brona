@@ -20,19 +20,18 @@ export function correctCollisions(pos: SpriteObject, delta: Vector) {
         const cbot = c.y + c.h;
 
         // Check collision
-        if (bleft > cright || bright < cleft ||
-            btop > cbot || bbot < ctop) {
-                continue;
+        if (bleft > cright || bright < cleft || btop > cbot || bbot < ctop) {
+            continue;
         }
 
         // There is some collision
         const bcenter = {
-            x: (bleft + bright / 2),
-            y: (bbot + btop / 2)
+            x: bleft + bright / 2,
+            y: bbot + btop / 2
         };
         const ccenter = {
-            x: (cleft + cright / 2),
-            y: (cbot + ctop / 2)
+            x: cleft + cright / 2,
+            y: cbot + ctop / 2
         };
 
         const direction = {
@@ -44,34 +43,27 @@ export function correctCollisions(pos: SpriteObject, delta: Vector) {
             if (direction.y > 0) {
                 if (Math.abs(bleft - cright) < Math.abs(btop - cbot)) {
                     delta.x = cright + 0.001 - pos.x;
-                }
-                else {
+                } else {
                     delta.y = cbot + 0.001 - pos.y;
                 }
-            }
-            else {
+            } else {
                 if (Math.abs(bleft - cright) < Math.abs(bbot - ctop)) {
                     delta.x = cright + 0.001 - pos.x;
-                }
-                else {
+                } else {
                     delta.y = ctop - 0.001 - (pos.y + pos.h);
                 }
             }
-        }
-        else {
+        } else {
             if (direction.y > 0) {
                 if (Math.abs(bright - cleft) < Math.abs(btop - cbot)) {
                     delta.x = cleft - 0.001 - (pos.x + pos.w);
-                }
-                else {
+                } else {
                     delta.y = cbot + 0.001 - pos.y;
                 }
-            }
-            else {
+            } else {
                 if (Math.abs(bright - cleft) < Math.abs(bbot - ctop)) {
                     delta.x = cleft - 0.001 - (pos.x + pos.w);
-                }
-                else {
+                } else {
                     delta.y = ctop - 0.001 - (pos.y + pos.h);
                 }
             }

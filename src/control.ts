@@ -1,4 +1,4 @@
-import {canvas} from "./rendering";
+import { canvas } from "./rendering";
 
 export let mousedown = false;
 export let rightMousedown = false;
@@ -10,8 +10,7 @@ export let mousePosition = {
 canvas.addEventListener("mousedown", function(ev) {
     if (ev.button == 0) {
         mousedown = true;
-    }
-    else if (ev.button == 2) {
+    } else if (ev.button == 2) {
         rightMousedown = true;
     }
 });
@@ -19,8 +18,7 @@ canvas.addEventListener("mousedown", function(ev) {
 canvas.addEventListener("mouseup", function(ev) {
     if (ev.button == 0) {
         mousedown = false;
-    }
-    else if (ev.button == 2) {
+    } else if (ev.button == 2) {
         rightMousedown = false;
     }
 });
