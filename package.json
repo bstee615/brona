@@ -35,8 +35,9 @@
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
-    "watch": "npx webpack --watch --config webpack.config.js",
-    "build": "npx webpack --config webpack.config.js",
+    "watch": "npx webpack --watch --config webpack.dev.config.js",
+    "build": "npx webpack --config webpack.dev.config.js",
+    "build-prod": "npx webpack --config webpack.prod.config.js",
     "test": "test"
   },
   "author": "Ben Steenhoek",
