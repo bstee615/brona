@@ -8,12 +8,20 @@ export class SpellState {
     private castingTimeout: NodeJS.Timeout;
     private spellCooking: boolean;
 
+    constructor() {
+        this.casting = false;
+        this.spellPoints = [];
+        this.spellLetters = [];
+        this.castingTimeout = null;
+        this.spellCooking = false;
+    }
+
     get isCasting() {
         return this.casting;
     }
 
     public toString(): string {
-        if (this.spellPoints.length > 0) {
+        if (this.spellLetters.length > 0) {
             return this.spellLetters.join("");
         } else if (this.spellCooking) {
             return "Spell cooking...";
@@ -24,10 +32,6 @@ export class SpellState {
 
     resetSpellPoints() {
         this.spellPoints = [];
-    }
-
-    resetSpellLetters() {
-        this.spellLetters = [];
     }
 
     addSpellPoint(pxPos: Vector) {
@@ -86,6 +90,7 @@ export class SpellState {
             this.spellLetters.push(result.text);
             this.spellCooking = false;
         });
+
         this.resetSpellPoints();
     }
 }

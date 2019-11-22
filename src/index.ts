@@ -52,13 +52,22 @@ function displaySpellInfo() {
     document.getElementById("spell-display").innerHTML = spellState.toString();
 }
 
-function drawFade(fader) {
+function doFadeUp() {
     const originalAlpha = ctx.globalAlpha;
-    ctx.globalAlpha = fader.value;
+    ctx.globalAlpha = fadeUp.value;
     ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     ctx.globalAlpha = originalAlpha;
 
-    fader.increment();
+    fadeUp.increment();
+}
+
+function doFadeDown() {
+    const originalAlpha = ctx.globalAlpha;
+    ctx.globalAlpha = fadeDown.value;
+    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    ctx.globalAlpha = originalAlpha;
+
+    fadeDown.increment();
 }
 
 // Main game loop. Only exits from it to switch to a secondary rendering loop.
@@ -69,17 +78,15 @@ function mainLoop() {
     displaySpellInfo();
 
     if (spellState.isCasting) {
-        drawFade(fadeDown);
+        doFadeDown();
+        fadeUp.reset();
 
-        spellState.resetSpellLetters();
         tileScale.increment();
 
         spellState.drawSpell();
     } else {
-        drawFade(fadeUp);
-
+        doFadeUp();
         fadeDown.reset();
-        fadeUp.reset();
     }
 
     window.requestAnimationFrame(mainLoop);

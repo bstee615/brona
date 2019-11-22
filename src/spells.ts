@@ -16,24 +16,22 @@ canvas.addEventListener(
 
 canvas.addEventListener("mousedown", function(ev) {
     if (ev.button == 2) {
+        spellState.startSpell();
         spellState.resetSpellPoints();
     }
 });
+
 canvas.addEventListener("mousemove", function(ev) {
     if (spellState.isCasting && rightMousedown) {
         spellState.addSpellPoint(new Vector(ev.offsetX, ev.offsetY));
     }
 });
+
 canvas.addEventListener("mouseup", function(ev) {
     if (ev.button == 2) {
         if (spellState.isCasting) {
             spellState.saveSpell();
             spellState.startSpellExpiry();
         }
-    }
-});
-canvas.addEventListener("mousedown", function(ev) {
-    if (ev.button == 2) {
-        spellState.startSpell();
     }
 });
