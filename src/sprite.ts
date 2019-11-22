@@ -3,8 +3,16 @@ function imagePath(filepath) {
 }
 
 export default class Sprite {
+    loaded: boolean;
 
-    constructor(filepath, srcX = null, srcY = null, srcW = null, srcH = null) {
+    srcX: number;
+    srcY: number;
+    srcW: number;
+    srcH: number;
+
+    img: HTMLImageElement;
+
+    constructor(filepath = null, srcX = null, srcY = null, srcW = null, srcH = null) {
         this.loaded = false;
         
         if (filepath) {
@@ -35,16 +43,18 @@ export default class Sprite {
     }
 }
 
-import Object from "./object";
+import GameObject from "./object";
 
-export class SpriteObject extends Object {
+export class SpriteObject extends GameObject {
+    spr: Sprite;
+
     constructor(x, y, w, h, sprite) {
         super(x, y, w, h);
 
-        this.img = sprite;
+        this.spr = sprite;
     }
 
     sprite() {
-        return this.img;
+        return this.spr;
     }
 }

@@ -26,7 +26,7 @@ const bg = new Sprite("forest.png");
 
 function renderLoopStep() {
     // Draw background image
-    bg.draw(rendering.ctx, 0, 0, rendering.canvas.width, rendering.canvas.height);
+    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientWidth);
 
     // Draw loaded tiles
     for (const tile of tiles.tiles) {

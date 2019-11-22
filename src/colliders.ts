@@ -34,8 +34,8 @@ export function correctCollisions(pos, delta) {
         };
 
         const direction = {
-            x: Math.sign(bcenter.x - ccenter.x),
-            y: Math.sign(bcenter.y - ccenter.y)
+            x: (bcenter.x - ccenter.x) / Math.abs(bcenter.x - ccenter.x),
+            y: (bcenter.y - ccenter.y) / Math.abs(bcenter.y - ccenter.y)
         };
 
         if (direction.x > 0) {

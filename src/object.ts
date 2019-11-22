@@ -1,6 +1,12 @@
 import {gameToPx} from "./rendering";
+import Sprite from "./sprite";
 
-export default class Object {
+export default class GameObject {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+
     constructor(x, y, w, h) {
         this.x = x;
         this.y = y;
@@ -14,7 +20,7 @@ export default class Object {
         this.sprite().draw(ctx, gameToPx(this.x), gameToPx(this.y), gameToPx(this.w), gameToPx(this.h))
     }
 
-    sprite() {
+    sprite(): Sprite {
         throw new Error("sprite() not implemented");
     }
 }

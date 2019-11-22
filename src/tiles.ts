@@ -1,4 +1,4 @@
-import Object from "./object";
+import GameObject from "./object";
 import Sprite from "./sprite";
 import {registerCollider} from "./colliders";
 
@@ -50,7 +50,12 @@ export function loadObject(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w =
     }
 }
 
-class TileObject extends Object {
+class TileObject extends GameObject {
+    tilerow: number;
+    tilecol: number;
+
+    name: string;
+
     constructor(x, y, w, h, tilerow, tilecol, name) {
         super(x, y, w, h);
 
