@@ -1,11 +1,10 @@
 import * as rendering from "./rendering";
-
+import * as control from "./control";
 import * as brona from "./brona";
+import {spellLetters, casting, positions} from "./spells";
 
 import {Tilemap} from "./tiles";
 import Sprite from "./sprite";
-import { canvas } from "./rendering";
-import { mousedown, mousePosition, rightMousedown } from "./control";
 
 let forestTiles = new Tilemap("forest_tiles.png", 12, 16, 32);
 
@@ -27,24 +26,6 @@ forestTiles.loadObject(2, 7, "Pit_2_3", 6, 7, 1, 1, true);
 forestTiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
 
 const bg = new Sprite("forest.png");
-
-function renderLoopStep() {
-    // Clear canvas
-    rendering.ctx.clearRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-    
-    // Draw background image
-    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-
-    // Draw loaded tiles
-    for (const tile of forestTiles.tiles) {
-        tile.draw(rendering.ctx);
-    }
-
-    // Draw Brona
-    brona.obj.draw(rendering.ctx);
-}
-
-let casting = false;
 
 class Fade {
     private range: any;
@@ -110,162 +91,87 @@ class Fade {
 };
 let colorFade = new Fade(0.2, 0.6, 0.01);
 let reverseColorFade = new Fade(0, 0.6, -0.01);
-reverseColorFade.value = 0;
 let timeFade = new Fade(0.05, 1, -0.1, 0.9);
+reverseColorFade.value = 0;
 
-let positions = [];
-
-import Tesseract from 'tesseract.js';
-
-let successfulSpellLetters = [];
-
-function saveSpell() {
-    let memoryCanvas = document.createElement("canvas");
-    memoryCanvas.width = rendering.canvas.width;
-    memoryCanvas.height = rendering.canvas.height;
-
-    let memoryCtx = memoryCanvas.getContext("2d");
-
-    memoryCtx.strokeStyle = "white";
-    memoryCtx.fillStyle = "white";
-    memoryCtx.fillRect(0, 0, memoryCanvas.width, memoryCanvas.height);
-
-    memoryCtx.beginPath();
-    memoryCtx.lineWidth = 30;
-    memoryCtx.strokeStyle = "orange";
-    if (positions.length > 0) {
-        memoryCtx.moveTo(positions[0].x, positions[0].y);
-        for (const pos of positions) {
-            memoryCtx.lineTo(pos.x, pos.y);
-        }
-    }
-    memoryCtx.stroke();
+function renderLoopStep() {
+    // Clear canvas
+    rendering.ctx.clearRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
     
-    // const img = document.createElement("img");
-    // img.src = memoryCanvas.toDataURL();
-    // document.body.appendChild(img);
+    // Draw background image
+    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
 
-    document.getElementById("spell-display").innerHTML = "Thinking...";
-    Tesseract.recognize(
-        memoryCanvas
-    ).then((result) => {
-        successfulSpellLetters.push(result.text);
-    });
-    // alert(string);
+    // Draw loaded tiles
+    for (const tile of forestTiles.tiles) {
+        tile.draw(rendering.ctx);
+    }
+
+    // Draw Brona
+    brona.obj.draw(rendering.ctx);
 }
-
-// Casting handlers
-
-let castingTimeout = null;
-canvas.addEventListener("mousedown", function(ev) {
-    if (ev.button == 2) {
-        casting = true;
-        if (castingTimeout) {
-            clearTimeout(castingTimeout);
-        }
-        castingTimeout = null;
-    }
-});
-
-canvas.addEventListener('contextmenu', function(ev) {
-    ev.preventDefault();
-    return false;
-}, false);
-
-canvas.addEventListener("mousedown", function(ev) {
-    if (ev.button == 2) {
-        positions = [];
-    }
-});
-canvas.addEventListener("mousemove", function(ev) {
-    if (casting && rightMousedown) {
-        positions.push({x: ev.offsetX, y: ev.offsetY});
-    }
-});
-canvas.addEventListener("mouseup", function(ev) {
-    if (ev.button == 2) {
-        if (casting) {
-            saveSpell();
-            positions = [];
-            castingTimeout = setTimeout(function() {
-                casting = false;
-            }, 1000);
-        }
-    }
-});
 
 // Movement handlers
-canvas.addEventListener("mousedown", function(ev) {
+rendering.canvas.addEventListener("mousedown", function(ev) {
     if (ev.button == 0) {
-        brona.target(mousePosition.x, mousePosition.y);
+        brona.target(control.mousePosition.x, control.mousePosition.y);
     }
 });
-canvas.addEventListener("mousemove", function() {
-    if (mousedown) {
-        brona.target(mousePosition.x, mousePosition.y);
+rendering.canvas.addEventListener("mousemove", function() {
+    if (control.mousedown) {
+        brona.target(control.mousePosition.x, control.mousePosition.y);
     }
 });
-
-function castingLoop() {
-    brona.movementLoopStep(timeFade.value);
-    timeFade.increment();
-    renderLoopStep();
-    
-    // Fade to black
-    const originalAlpha = rendering.ctx.globalAlpha;
-    rendering.ctx.globalAlpha = colorFade.value;
-    rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-    rendering.ctx.globalAlpha = originalAlpha;
-
-    colorFade.increment();
-
-    // Draw circles for spell
-    rendering.ctx.beginPath();
-    rendering.ctx.lineWidth = 30;
-    rendering.ctx.strokeStyle = "orange";
-    if (positions.length > 0) {
-        rendering.ctx.moveTo(positions[0].x, positions[0].y);
-        for (const pos of positions) {
-            rendering.ctx.lineTo(pos.x, pos.y);
-        }
-    }
-    rendering.ctx.stroke();
-    
-    if (successfulSpellLetters.length > 0) {
-        document.getElementById("spell-display").innerHTML = `Spell: "${successfulSpellLetters.join("")}"`;
-    }
-
-    if (!casting) {
-        colorFade.reset();
-        reverseColorFade.reset();
-        window.requestAnimationFrame(gameLoop);
-    }
-    else {
-        window.requestAnimationFrame(castingLoop);
-    }
-}
 
 // Main game loop. Only exits from it to switch to a secondary rendering loop.
 function gameLoop() {
     brona.movementLoopStep(1);
     renderLoopStep();
 
-    const originalAlpha = rendering.ctx.globalAlpha;
-    rendering.ctx.globalAlpha = reverseColorFade.value;
-    rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-    rendering.ctx.globalAlpha = originalAlpha;
-
-    reverseColorFade.increment();
-
-    if (successfulSpellLetters.length > 0) {
-        document.getElementById("spell-display").innerHTML = `Spell: "${successfulSpellLetters.join()}"`;
+    if (spellLetters.length > 0) {
+        document.getElementById("spell-display").innerHTML = `Spell: "${spellLetters.join()}"`;
+    }
+    else {
+        document.getElementById("spell-display").innerHTML = "No spell";
     }
 
     if (casting) {
-        castingLoop();
-        successfulSpellLetters = [];
+        spellLetters.splice(0, spellLetters.length);
+
+        // Increment time scale fade
+        timeFade.increment();
+        
+        // Fade to black
+        const originalAlpha = rendering.ctx.globalAlpha;
+        rendering.ctx.globalAlpha = colorFade.value;
+        rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+        rendering.ctx.globalAlpha = originalAlpha;
+    
+        colorFade.increment();
+    
+        // Draw circles for spell
+        rendering.ctx.beginPath();
+        rendering.ctx.lineWidth = 30;
+        rendering.ctx.strokeStyle = "orange";
+        if (positions.length > 0) {
+            rendering.ctx.moveTo(positions[0].x, positions[0].y);
+            for (const pos of positions) {
+                rendering.ctx.lineTo(pos.x, pos.y);
+            }
+        }
+        rendering.ctx.stroke();
     }
     else {
+        // Apply reverse fade
+        const originalAlpha = rendering.ctx.globalAlpha;
+        rendering.ctx.globalAlpha = reverseColorFade.value;
+        rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+        rendering.ctx.globalAlpha = originalAlpha;
+    
+        reverseColorFade.increment();
+
+        colorFade.reset();
+        reverseColorFade.reset();
+
         // Loop forever
         window.requestAnimationFrame(gameLoop);
     }
