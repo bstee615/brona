@@ -228,7 +228,7 @@ function gameLoop() {
     }
 
     if (casting) {
-        setInterval(function() {
+        setTimeout(function() {
             casting = false;
         }, 4000);
         castingLoop();
