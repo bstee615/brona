@@ -1,5 +1,6 @@
 import Object from "./object";
 import Sprite from "./sprite";
+import {registerCollider} from "./colliders";
 
 // Tile stuff
 
@@ -41,13 +42,11 @@ export function loadTile(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1
     return tile;
 }
 
-export let colliders = [];
-
 export function loadObject(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1, collider=false) {
     const tile = loadTile(tilerow, tilecol, name, x, y, w, h);
 
     if (collider) {
-        colliders.push(tile);
+        registerCollider(tile);
     }
 }
 
