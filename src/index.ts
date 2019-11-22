@@ -5,7 +5,7 @@ import * as brona from "./brona";
 import * as tiles from "./tiles";
 import Sprite from "./sprite";
 import { canvas } from "./rendering";
-import { mousedown, mousePosition } from "./control";
+import { mousedown, mousePosition, rightMousedown } from "./control";
 
 tiles.loadTile(0, 13, "Mushroom");
 tiles.loadTile(0, 13, "Mushroom", 0, 1);
@@ -44,12 +44,6 @@ function renderLoopStep() {
 
 let casting = false;
 
-window.addEventListener("keydown", function(ev) {
-    if (ev.key === "c") {
-        casting = true;
-    }
-});
-
 class Fade {
     private range: any;
     private inc: number;
@@ -60,6 +54,10 @@ class Fade {
 
     get value() {
         return this.currentValue;
+    }
+
+    set value(input) {
+        this.currentValue = input;
     }
 
     get done() {
@@ -109,6 +107,8 @@ class Fade {
     }
 };
 let colorFade = new Fade(0.2, 0.6, 0.01);
+let reverseColorFade = new Fade(0, 0.6, -0.01);
+reverseColorFade.value = 0;
 let timeFade = new Fade(0.05, 1, -0.1, 0.9);
 
 let positions = [];
@@ -153,29 +153,53 @@ function saveSpell() {
 }
 
 // Casting handlers
-canvas.addEventListener("mousedown", function() {
-    positions = [];
+
+let castingTimeout = null;
+canvas.addEventListener("mousedown", function(ev) {
+    if (ev.button == 2) {
+        casting = true;
+        if (castingTimeout) {
+            clearTimeout(castingTimeout);
+        }
+        castingTimeout = null;
+    }
+});
+
+canvas.addEventListener('contextmenu', function(ev) {
+    ev.preventDefault();
+    return false;
+}, false);
+
+canvas.addEventListener("mousedown", function(ev) {
+    if (ev.button == 2) {
+        positions = [];
+    }
 });
 canvas.addEventListener("mousemove", function(ev) {
-    if (casting && mousedown) {
+    if (casting && rightMousedown) {
         positions.push({x: ev.offsetX, y: ev.offsetY});
     }
 });
 canvas.addEventListener("mouseup", function(ev) {
-    if (casting) {
-        saveSpell();
-        positions = [];
+    if (ev.button == 2) {
+        if (casting) {
+            saveSpell();
+            positions = [];
+            castingTimeout = setTimeout(function() {
+                casting = false;
+            }, 1000);
+        }
     }
 });
 
 // Movement handlers
-canvas.addEventListener("mousedown", function() {
-    if (!casting) {
+canvas.addEventListener("mousedown", function(ev) {
+    if (ev.button == 0) {
         brona.target(mousePosition.x, mousePosition.y);
     }
 });
 canvas.addEventListener("mousemove", function() {
-    if (mousedown && !casting) {
+    if (mousedown) {
         brona.target(mousePosition.x, mousePosition.y);
     }
 });
@@ -211,6 +235,7 @@ function castingLoop() {
 
     if (!casting) {
         colorFade.reset();
+        reverseColorFade.reset();
         window.requestAnimationFrame(gameLoop);
     }
     else {
@@ -223,14 +248,18 @@ function gameLoop() {
     brona.movementLoopStep(1);
     renderLoopStep();
 
+    const originalAlpha = rendering.ctx.globalAlpha;
+    rendering.ctx.globalAlpha = reverseColorFade.value;
+    rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+    rendering.ctx.globalAlpha = originalAlpha;
+
+    reverseColorFade.increment();
+
     if (successfulSpellLetters.length > 0) {
         document.getElementById("spell-display").innerHTML = `Spell: "${successfulSpellLetters.join()}"`;
     }
 
     if (casting) {
-        setTimeout(function() {
-            casting = false;
-        }, 4000);
         castingLoop();
         successfulSpellLetters = [];
     }
