@@ -1,10 +1,10 @@
-import { ctx, canvas } from "./rendering";
 import * as brona from "./brona";
-import { spellState } from "./spells";
-
-import { Tilemap } from "./tiles";
-import Sprite from "./sprite";
 import { Fader } from "./Fader";
+import { canvas, ctx } from "./rendering";
+import { spellState } from "./spells";
+import Sprite from "./sprite";
+import { Tilemap } from "./tiles";
+
 
 let forestTiles = new Tilemap("forest_tiles.png", 12, 16, 32);
 

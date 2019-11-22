@@ -1,5 +1,3 @@
-import Sprite from "./sprite";
-
 export const canvas = <HTMLCanvasElement>document.getElementById("gameCanvas");
 export const ctx = canvas.getContext("2d");
 

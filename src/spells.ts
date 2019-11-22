@@ -1,7 +1,7 @@
-import { canvas } from "./rendering";
 import { rightMousedown } from "./control";
-import { Vector } from "./Vector";
+import { canvas } from "./rendering";
 import { SpellState } from "./SpellState";
+import { Vector } from "./Vector";
 
 export const spellState = new SpellState();
 

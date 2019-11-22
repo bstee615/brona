@@ -1,8 +1,8 @@
-import Sprite, { SpriteObject } from "./sprite";
-import { pxToGame, canvas } from "./rendering";
 import { correctCollisions } from "./colliders";
-import { Vector } from "./Vector";
 import * as control from "./control";
+import { canvas, pxToGame } from "./rendering";
+import Sprite, { SpriteObject } from "./sprite";
+import { Vector } from "./Vector";
 
 // Movement handlers
 canvas.addEventListener("mousedown", function(ev) {

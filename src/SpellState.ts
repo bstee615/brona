@@ -1,5 +1,5 @@
-import { canvas, ctx } from "./rendering";
 import Tesseract from "tesseract.js";
+import { canvas, ctx } from "./rendering";
 import { Vector } from "./Vector";
 export class SpellState {
     private casting: boolean;
