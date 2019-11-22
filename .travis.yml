@@ -6,7 +6,7 @@ install:
   - npm i
 
 before_script:
-  - yarn prod
+  - npm run build-prod
 
 deploy:
   provider: pages
