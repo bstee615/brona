@@ -38,7 +38,7 @@
     "watch": "node_modules/.bin/webpack --watch --config webpack.dev.config.js",
     "build": "node_modules/.bin/webpack --config webpack.dev.config.js",
     "build-prod": "node_modules/.bin/webpack --config webpack.prod.config.js",
-    "test": "test"
+    "test": "echo lol"
   },
   "author": "Ben Steenhoek",
   "license": "ISC"
