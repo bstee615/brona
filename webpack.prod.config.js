@@ -29,7 +29,7 @@ module.exports = {
         ]),
         new webpack.DefinePlugin({
           'process.env': {
-            'BASE_URL': JSON.stringify('http://benjijang.com/brona/'),
+            'BASE_URL': JSON.stringify('http://benjijang.com/brona/public'),
             'NODE_ENV': JSON.stringify('production')
           }
         })
