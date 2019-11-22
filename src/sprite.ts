@@ -1,4 +1,4 @@
-function imagePath(filepath) {
+function imagePath(filepath: any) {
     return `images/${filepath}`;
 }
 
@@ -32,7 +32,7 @@ export default class Sprite {
         this.draw = this.draw.bind(this);
     }
 
-    draw(ctx, x, y, w, h) {
+    draw(ctx: CanvasRenderingContext2D, x: any, y: any, w: any, h: any) {
         // console.log(this.name, x, y, w, h);
         if (this.srcX != null && this.srcY != null && this.srcW != null && this.srcH != null) {
             ctx.drawImage(this.img, this.srcX, this.srcY, this.srcW, this.srcH, x, y, w, h);
@@ -48,7 +48,7 @@ import GameObject from "./object";
 export class SpriteObject extends GameObject {
     spr: Sprite;
 
-    constructor(x, y, w, h, sprite) {
+    constructor(x: number, y: number, w: number, h: number, sprite: Sprite) {
         super(x, y, w, h);
 
         this.spr = sprite;

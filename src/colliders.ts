@@ -1,11 +1,13 @@
+import { SpriteObject } from "./sprite";
+import { Vector } from "./Vector";
 
 export let colliders = [];
 
-export function registerCollider(coll) {
+export function registerCollider(coll: any) {
     colliders.push(coll);
 }
 
-export function correctCollisions(pos, delta) {
+export function correctCollisions(pos: SpriteObject, delta: Vector) {
     const bleft = pos.x + delta.x;
     const bright = pos.x + pos.w + delta.x;
     const btop = pos.y + delta.y;

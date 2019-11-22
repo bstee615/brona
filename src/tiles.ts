@@ -16,7 +16,7 @@ for (let row = 0; row < 12; row ++) {
 // Holds instances of the tiles
 export let tiles = [];
 
-function loadSprite(row, col) {
+function loadSprite(row: number, col: number) {
     if (tileSprites[row][col].loaded) {
         return;
     }
@@ -29,7 +29,7 @@ function loadSprite(row, col) {
         );
 }
 
-export function loadTile(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
+export function loadTile(tilerow: number, tilecol: number, name = "Unnamed", x = 0, y = 0, w = 1, h = 1) {
     loadSprite(tilerow, tilecol);
 
     const tile = new TileObject(x, y, w, h, 
@@ -42,7 +42,7 @@ export function loadTile(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1
     return tile;
 }
 
-export function loadObject(tilerow, tilecol, name = "Unnamed", x = 0, y = 0, w = 1, h = 1, collider=false) {
+export function loadObject(tilerow: number, tilecol: number, name = "Unnamed", x = 0, y = 0, w = 1, h = 1, collider=false) {
     const tile = loadTile(tilerow, tilecol, name, x, y, w, h);
 
     if (collider) {
@@ -56,7 +56,7 @@ class TileObject extends GameObject {
 
     name: string;
 
-    constructor(x, y, w, h, tilerow, tilecol, name) {
+    constructor(x: number, y: number, w: number, h: number, tilerow: number, tilecol: number, name: string) {
         super(x, y, w, h);
 
         this.tilerow = tilerow;
