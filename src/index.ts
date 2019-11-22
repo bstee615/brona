@@ -113,6 +113,10 @@ let timeFade = new Fade(0.05, 1, -0.1, 0.9);
 
 let positions = [];
 
+import Tesseract from 'tesseract.js';
+
+let successfulSpellLetters = [];
+
 function saveSpell() {
     let memoryCanvas = document.createElement("canvas");
     memoryCanvas.width = rendering.canvas.width;
@@ -135,9 +139,17 @@ function saveSpell() {
     }
     memoryCtx.stroke();
     
-    const img = document.createElement("img");
-    img.src = memoryCanvas.toDataURL();
-    document.body.appendChild(img);
+    // const img = document.createElement("img");
+    // img.src = memoryCanvas.toDataURL();
+    // document.body.appendChild(img);
+
+    document.getElementById("spell-display").innerHTML = "Thinking...";
+    Tesseract.recognize(
+        memoryCanvas
+    ).then((result) => {
+        successfulSpellLetters.push(result.text);
+    });
+    // alert(string);
 }
 
 // Casting handlers
@@ -152,6 +164,7 @@ canvas.addEventListener("mousemove", function(ev) {
 canvas.addEventListener("mouseup", function(ev) {
     if (casting) {
         saveSpell();
+        positions = [];
     }
 });
 
@@ -191,6 +204,10 @@ function castingLoop() {
         }
     }
     rendering.ctx.stroke();
+    
+    if (successfulSpellLetters.length > 0) {
+        document.getElementById("spell-display").innerHTML = `Spell: "${successfulSpellLetters.join("")}"`;
+    }
 
     if (!casting) {
         colorFade.reset();
@@ -206,11 +223,16 @@ function gameLoop() {
     brona.movementLoopStep(1);
     renderLoopStep();
 
+    if (successfulSpellLetters.length > 0) {
+        document.getElementById("spell-display").innerHTML = `Spell: "${successfulSpellLetters.join()}"`;
+    }
+
     if (casting) {
         setInterval(function() {
             casting = false;
-        }, 5000);
+        }, 4000);
         castingLoop();
+        successfulSpellLetters = [];
     }
     else {
         // Loop forever

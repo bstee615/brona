@@ -26,7 +26,9 @@
     "fs.realpath": "^1.0.0"
   },
   "devDependencies": {
+    "@types/tesseract.js": "0.0.2",
     "copy-webpack-plugin": "^5.0.5",
+    "tesseract.js": "^1.0.19",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
