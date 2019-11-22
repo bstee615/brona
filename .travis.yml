@@ -9,7 +9,7 @@ before_script:
   - npm run build-prod
 
 deploy:
-  local_dir: public
+  local_dir: dist
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable

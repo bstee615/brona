@@ -5,9 +5,9 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     output: {
-      path: path.join(__dirname, 'public'),
+      path: path.join(__dirname, 'dist'),
       filename: 'main.js',
-      publicPath: '/public/'
+      publicPath: '/'
     },
     module: {
         rules: [
@@ -29,7 +29,7 @@ module.exports = {
         ]),
         new webpack.DefinePlugin({
           'process.env': {
-            'BASE_URL': JSON.stringify('http://benjijang.com/brona/public'),
+            'BASE_URL': JSON.stringify('http://benjijang.com/brona/'),
             'NODE_ENV': JSON.stringify('production')
           }
         })
