@@ -113,22 +113,54 @@ let timeFade = new Fade(0.05, 1, -0.1, 0.9);
 
 let positions = [];
 
+function saveSpell() {
+    let memoryCanvas = document.createElement("canvas");
+    memoryCanvas.width = rendering.canvas.width;
+    memoryCanvas.height = rendering.canvas.height;
+
+    let memoryCtx = memoryCanvas.getContext("2d");
+
+    memoryCtx.strokeStyle = "white";
+    memoryCtx.fillStyle = "white";
+    memoryCtx.fillRect(0, 0, memoryCanvas.width, memoryCanvas.height);
+
+    memoryCtx.beginPath();
+    memoryCtx.lineWidth = 30;
+    memoryCtx.strokeStyle = "orange";
+    if (positions.length > 0) {
+        memoryCtx.moveTo(positions[0].x, positions[0].y);
+        for (const pos of positions) {
+            memoryCtx.lineTo(pos.x, pos.y);
+        }
+    }
+    memoryCtx.stroke();
+    
+    const img = document.createElement("img");
+    img.src = memoryCanvas.toDataURL();
+    document.body.appendChild(img);
+}
+
+// Casting handlers
 canvas.addEventListener("mousedown", function() {
     positions = [];
 });
-
 canvas.addEventListener("mousemove", function(ev) {
     if (casting && mousedown) {
         positions.push({x: ev.offsetX, y: ev.offsetY});
     }
 });
+canvas.addEventListener("mouseup", function(ev) {
+    if (casting) {
+        saveSpell();
+    }
+});
 
+// Movement handlers
 canvas.addEventListener("mousedown", function() {
     if (!casting) {
         brona.target(mousePosition.x, mousePosition.y);
     }
 });
-
 canvas.addEventListener("mousemove", function() {
     if (mousedown && !casting) {
         brona.target(mousePosition.x, mousePosition.y);
