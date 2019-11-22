@@ -4,6 +4,8 @@ import * as brona from "./brona";
 
 import * as tiles from "./tiles";
 import Sprite from "./sprite";
+import { canvas } from "./rendering";
+import { mousedown, mousePosition } from "./control";
 
 tiles.loadTile(0, 13, "Mushroom");
 tiles.loadTile(0, 13, "Mushroom", 0, 1);
@@ -106,8 +108,32 @@ class Fade {
         this.doneFading = false;
     }
 };
-let fade = new Fade(0.2, 0.6, 0.01);
+let colorFade = new Fade(0.2, 0.6, 0.01);
 let timeFade = new Fade(0.05, 1, -0.1, 0.9);
+
+let positions = [];
+
+canvas.addEventListener("mousedown", function() {
+    positions = [];
+});
+
+canvas.addEventListener("mousemove", function(ev) {
+    if (casting && mousedown) {
+        positions.push({x: ev.offsetX, y: ev.offsetY});
+    }
+});
+
+canvas.addEventListener("mousedown", function() {
+    if (!casting) {
+        brona.target(mousePosition.x, mousePosition.y);
+    }
+});
+
+canvas.addEventListener("mousemove", function() {
+    if (mousedown && !casting) {
+        brona.target(mousePosition.x, mousePosition.y);
+    }
+});
 
 function castingLoop() {
     brona.movementLoopStep(timeFade.value);
@@ -116,14 +142,26 @@ function castingLoop() {
     
     // Fade to black
     const originalAlpha = rendering.ctx.globalAlpha;
-    rendering.ctx.globalAlpha = fade.value;
+    rendering.ctx.globalAlpha = colorFade.value;
     rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
     rendering.ctx.globalAlpha = originalAlpha;
 
-    fade.increment();
+    colorFade.increment();
+
+    // Draw circles for spell
+    rendering.ctx.beginPath();
+    rendering.ctx.lineWidth = 30;
+    rendering.ctx.strokeStyle = "orange";
+    if (positions.length > 0) {
+        rendering.ctx.moveTo(positions[0].x, positions[0].y);
+        for (const pos of positions) {
+            rendering.ctx.lineTo(pos.x, pos.y);
+        }
+    }
+    rendering.ctx.stroke();
 
     if (!casting) {
-        fade.reset();
+        colorFade.reset();
         window.requestAnimationFrame(gameLoop);
     }
     else {

@@ -7,12 +7,12 @@ import { Vector } from "./Vector";
 export const obj = new SpriteObject(3, 4, 1, 1, new Sprite("brona.png", "Brona"));
 const speed = 0.3;
 
-export let targetPosition = {
+let targetPosition = {
     x: null,
     y: null
 };
 
-function target(x: number, y: number) {
+export function target(x: number, y: number) {
     targetPosition = {
         x: pxToGame(x) - obj.w/2,
         y: pxToGame(y) - obj.h/2
@@ -23,16 +23,6 @@ export function cancelTargetPosition() {
     targetPosition.x = null;
     targetPosition.y = null;
 }
-
-canvas.addEventListener("mousedown", function() {
-    target(control.mousePosition.x, control.mousePosition.y);
-});
-
-canvas.addEventListener("mousemove", function() {
-    if (control.mousedown) {
-        target(control.mousePosition.x, control.mousePosition.y);
-    }
-});
 
 function getCollisionDelta(delta: Vector): Vector {
     let collDelta = correctCollisions(obj, delta);
