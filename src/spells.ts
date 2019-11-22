@@ -1,13 +1,26 @@
-import { canvas } from "./rendering";
+import { canvas, ctx } from "./rendering";
 import { rightMousedown } from "./control";
 
 export let casting = false;
 
-export let positions = [];
+let spellPoints = [];
 
 import Tesseract from 'tesseract.js';
 
 export let spellLetters = [];
+
+export function drawSpell() {
+    ctx.beginPath();
+    ctx.lineWidth = 30;
+    ctx.strokeStyle = "orange";
+    if (spellPoints.length > 0) {
+        ctx.moveTo(spellPoints[0].x, spellPoints[0].y);
+        for (const pos of spellPoints) {
+            ctx.lineTo(pos.x, pos.y);
+        }
+    }
+    ctx.stroke();
+}
 
 function saveSpell() {
     let memoryCanvas = document.createElement("canvas");
@@ -23,9 +36,9 @@ function saveSpell() {
     memoryCtx.beginPath();
     memoryCtx.lineWidth = 30;
     memoryCtx.strokeStyle = "orange";
-    if (positions.length > 0) {
-        memoryCtx.moveTo(positions[0].x, positions[0].y);
-        for (const pos of positions) {
+    if (spellPoints.length > 0) {
+        memoryCtx.moveTo(spellPoints[0].x, spellPoints[0].y);
+        for (const pos of spellPoints) {
             memoryCtx.lineTo(pos.x, pos.y);
         }
     }
@@ -64,19 +77,19 @@ canvas.addEventListener('contextmenu', function(ev) {
 
 canvas.addEventListener("mousedown", function(ev) {
     if (ev.button == 2) {
-        positions = [];
+        spellPoints = [];
     }
 });
 canvas.addEventListener("mousemove", function(ev) {
     if (casting && rightMousedown) {
-        positions.push({x: ev.offsetX, y: ev.offsetY});
+        spellPoints.push({x: ev.offsetX, y: ev.offsetY});
     }
 });
 canvas.addEventListener("mouseup", function(ev) {
     if (ev.button == 2) {
         if (casting) {
             saveSpell();
-            positions = [];
+            spellPoints = [];
             castingTimeout = setTimeout(function() {
                 casting = false;
             }, 1000);

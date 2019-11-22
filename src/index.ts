@@ -1,10 +1,10 @@
-import * as rendering from "./rendering";
-import * as control from "./control";
+import {ctx, canvas} from "./rendering";
 import * as brona from "./brona";
-import {spellLetters, casting, positions} from "./spells";
+import {spellLetters, casting, drawSpell} from "./spells";
 
 import {Tilemap} from "./tiles";
 import Sprite from "./sprite";
+import { Fader } from "./Fader";
 
 let forestTiles = new Tilemap("forest_tiles.png", 12, 16, 32);
 
@@ -27,153 +27,67 @@ forestTiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
 
 const bg = new Sprite("forest.png");
 
-class Fade {
-    private range: any;
-    private inc: number;
+let fadeDown = new Fader(0.2, 0.6, 0.01);
+let fadeUp = new Fader(0, 0.6, -0.01);
+let tileScale = new Fader(0.05, 1, -0.1, 0.9);
+fadeUp.value = 0;
 
-    private currentValue: number;
-    private accelFactor: number;
-    private doneFading: boolean;
-
-    get value() {
-        return this.currentValue;
-    }
-
-    set value(input) {
-        this.currentValue = input;
-    }
-
-    get done() {
-        return this.doneFading;
-    }
-
-    constructor(min, max, inc, accelFactor = 1) {
-        this.range = {
-            min,
-            max
-        };
-        this.inc = inc;
-        this.accelFactor = accelFactor;
-        this.reset();
-    }
-
-    increment() {
-        if (this.doneFading) {
-            return;
-        }
-
-        this.currentValue += this.inc;
-        this.inc = this.inc * this.accelFactor;
-
-        if (this.inc > 0) {
-            if (this.currentValue >= this.range.max) {
-                this.currentValue = this.range.max;
-                this.doneFading = true;
-            }
-        }
-        else {
-            if (this.currentValue <= this.range.min) {
-                this.currentValue = this.range.min;
-                this.doneFading = true;
-            }
-        }
-    }
-    
-    reset() {
-        if (this.inc > 0) {
-            this.currentValue = this.range.min;
-        }
-        else {
-            this.currentValue = this.range.max;
-        }
-        this.doneFading = false;
-    }
-};
-let colorFade = new Fade(0.2, 0.6, 0.01);
-let reverseColorFade = new Fade(0, 0.6, -0.01);
-let timeFade = new Fade(0.05, 1, -0.1, 0.9);
-reverseColorFade.value = 0;
-
-function renderLoopStep() {
+function renderObjects() {
     // Clear canvas
-    rendering.ctx.clearRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     
     // Draw background image
-    bg.draw(rendering.ctx, 0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
+    bg.draw(ctx, 0, 0, canvas.clientWidth, canvas.clientHeight);
 
     // Draw loaded tiles
     for (const tile of forestTiles.tiles) {
-        tile.draw(rendering.ctx);
+        tile.draw(ctx);
     }
 
     // Draw Brona
-    brona.obj.draw(rendering.ctx);
+    brona.obj.draw(ctx);
 }
 
-// Movement handlers
-rendering.canvas.addEventListener("mousedown", function(ev) {
-    if (ev.button == 0) {
-        brona.target(control.mousePosition.x, control.mousePosition.y);
-    }
-});
-rendering.canvas.addEventListener("mousemove", function() {
-    if (control.mousedown) {
-        brona.target(control.mousePosition.x, control.mousePosition.y);
-    }
-});
-
-// Main game loop. Only exits from it to switch to a secondary rendering loop.
-function gameLoop() {
-    brona.movementLoopStep(1);
-    renderLoopStep();
-
+function displaySpellInfo() {
     if (spellLetters.length > 0) {
         document.getElementById("spell-display").innerHTML = `Spell: "${spellLetters.join()}"`;
     }
     else {
         document.getElementById("spell-display").innerHTML = "No spell";
     }
+}
+
+function drawFade(fader) {
+    const originalAlpha = ctx.globalAlpha;
+    ctx.globalAlpha = fader.value;
+    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    ctx.globalAlpha = originalAlpha;
+
+    fader.increment();
+}
+
+// Main game loop. Only exits from it to switch to a secondary rendering loop.
+function mainLoop() {
+    brona.moveBrona(1);
+    renderObjects();
+
+    displaySpellInfo();
 
     if (casting) {
-        spellLetters.splice(0, spellLetters.length);
+        drawFade(fadeDown);
 
-        // Increment time scale fade
-        timeFade.increment();
-        
-        // Fade to black
-        const originalAlpha = rendering.ctx.globalAlpha;
-        rendering.ctx.globalAlpha = colorFade.value;
-        rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-        rendering.ctx.globalAlpha = originalAlpha;
-    
-        colorFade.increment();
-    
-        // Draw circles for spell
-        rendering.ctx.beginPath();
-        rendering.ctx.lineWidth = 30;
-        rendering.ctx.strokeStyle = "orange";
-        if (positions.length > 0) {
-            rendering.ctx.moveTo(positions[0].x, positions[0].y);
-            for (const pos of positions) {
-                rendering.ctx.lineTo(pos.x, pos.y);
-            }
-        }
-        rendering.ctx.stroke();
+        spellLetters.splice(0, spellLetters.length);
+        tileScale.increment();
+            
+        drawSpell();
     }
     else {
-        // Apply reverse fade
-        const originalAlpha = rendering.ctx.globalAlpha;
-        rendering.ctx.globalAlpha = reverseColorFade.value;
-        rendering.ctx.fillRect(0, 0, rendering.canvas.clientWidth, rendering.canvas.clientHeight);
-        rendering.ctx.globalAlpha = originalAlpha;
-    
-        reverseColorFade.increment();
+        drawFade(fadeUp);
 
-        colorFade.reset();
-        reverseColorFade.reset();
-
-        // Loop forever
-        window.requestAnimationFrame(gameLoop);
+        fadeDown.reset();
+        fadeUp.reset();
     }
+
+    window.requestAnimationFrame(mainLoop);
 }
-gameLoop();
+mainLoop();

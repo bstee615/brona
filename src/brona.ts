@@ -1,8 +1,20 @@
 import Sprite, {SpriteObject} from "./sprite";
-import * as control from "./control";
-import {canvas, pxToGame} from "./rendering";
+import {pxToGame, canvas} from "./rendering";
 import {correctCollisions} from "./colliders";
 import { Vector } from "./Vector";
+import * as control from "./control";
+
+// Movement handlers
+canvas.addEventListener("mousedown", function(ev) {
+    if (ev.button == 0) {
+        target(control.mousePosition.x, control.mousePosition.y);
+    }
+});
+canvas.addEventListener("mousemove", function() {
+    if (control.mousedown) {
+        target(control.mousePosition.x, control.mousePosition.y);
+    }
+});
 
 export const obj = new SpriteObject(3, 4, 1, 1, new Sprite("brona.png", "Brona"));
 const speed = 0.3;
@@ -63,7 +75,7 @@ function getMovementDelta(delta: Vector): Vector {
     }
 }
 
-export function movementLoopStep(timeScale) {
+export function moveBrona(timeScale) {
     const inputDelta = getInputDelta();
     let movementDelta = getMovementDelta(inputDelta);
 
