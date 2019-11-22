@@ -13,14 +13,14 @@ tiles.loadTile(6, 1, "Pine_3", 3, 4);
 tiles.loadTile(7, 1, "Pine_4", 3, 5);
 
 tiles.loadObject(0, 6, "Pit_1_1", 5, 5, 1, 1, true);
-tiles.loadObject(0, 7, "Pit_2_1", 6, 5, 1, 1, true);
-tiles.loadObject(0, 8, "Pit_3_1", 7, 5, 1, 1, true);
-tiles.loadObject(1, 6, "Pit_1_2", 5, 6, 1, 1, true);
-tiles.loadObject(1, 7, "Pit_2_2", 6, 6, 1, 1, true);
-tiles.loadObject(1, 8, "Pit_3_2", 7, 6, 1, 1, true);
-tiles.loadObject(2, 6, "Pit_1_3", 5, 7, 1, 1, true);
-tiles.loadObject(2, 7, "Pit_2_3", 6, 7, 1, 1, true);
-tiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
+// tiles.loadObject(0, 7, "Pit_2_1", 6, 5, 1, 1, true);
+// tiles.loadObject(0, 8, "Pit_3_1", 7, 5, 1, 1, true);
+// tiles.loadObject(1, 6, "Pit_1_2", 5, 6, 1, 1, true);
+// tiles.loadObject(1, 7, "Pit_2_2", 6, 6, 1, 1, true);
+// tiles.loadObject(1, 8, "Pit_3_2", 7, 6, 1, 1, true);
+// tiles.loadObject(2, 6, "Pit_1_3", 5, 7, 1, 1, true);
+// tiles.loadObject(2, 7, "Pit_2_3", 6, 7, 1, 1, true);
+// tiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
 
 const bg = new Sprite("forest.png");
 

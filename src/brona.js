@@ -33,60 +33,66 @@ canvas.addEventListener("mousemove", function() {
 });
 
 function correctCollisions(delta) {
-    let corrections = null;
+    let newDelta = {
+        x: 0,
+        y: 0
+    };
 
-    const bleft = obj.x - obj.w/2 + delta.x;
-    const bright = obj.x + obj.w/2 + delta.x;
-    const btop = obj.y - obj.h/2 + delta.y;
-    const bbot = obj.y + obj.h/2 + delta.y;
+    const bleft = obj.x + delta.x;
+    const bright = obj.x + obj.w + delta.x;
+    const btop = obj.y + delta.y;
+    const bbot = obj.y + obj.h + delta.y;
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "purple";
+
+    ctx.beginPath();
+    ctx.lineTo(gameToPx(obj.x), gameToPx(obj.y));
+    ctx.lineTo(gameToPx(bleft), gameToPx(btop));
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.lineTo(gameToPx(obj.x + obj.w), gameToPx(obj.y));
+    ctx.lineTo(gameToPx(bright), gameToPx(btop));
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.lineTo(gameToPx(obj.x + obj.w), gameToPx(obj.y + obj.h));
+    ctx.lineTo(gameToPx(bright), gameToPx(bbot));
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.lineTo(gameToPx(obj.x), gameToPx(obj.y + obj.h));
+    ctx.lineTo(gameToPx(bleft), gameToPx(bbot));
+    ctx.stroke();
 
     for (const c of colliders) {
-        const cleft = c.x - c.w/2;
-        const cright = c.x + c.w/2;
-        const ctop = c.y - c.h/2;
-        const cbot = c.y + c.h/2;
+        const cleft = c.x;
+        const cright = c.x + c.w;
+        const ctop = c.y;
+        const cbot = c.y + c.h;
 
         // check colinear vertically
-        if (bleft > cleft && bleft < cright ||
-            bright > cleft && bright < cright) {
-            // check colinear horizontally
-            if (btop > ctop && btop < cbot ||
-                bbot > ctop && bbot < cbot) {
-                    // Collides somewhere
-                    corrections = {
-                        x: 0,
-                        y: 0
-                    };
+        if ((bleft > cleft && bleft < cright ||
+                bright > cleft && bright < cright) &&
+            (btop > ctop && btop < cbot ||
+                bbot > ctop && bbot < cbot)) {
 
-                    // For now, always correct to bottom right
-                    if (cright - bleft < bright - cleft) {
-                        corrections.x = cright - bleft;
-                    }
-                    else {
-                        corrections.x = cleft - bright;
-                    }
-                    if (cbot - btop < bbot - ctop) {
-                        corrections.y = cbot - btop;
-                    }
-                    else {
-                        corrections.y = ctop - bbot;
-                    }
-                    
-                    if (Math.abs(corrections.x) < Math.abs(corrections.y)) {
-                        corrections.x += 0.001 * Math.sign(corrections.x);
-                        corrections.y = 0;
-                    }
-                    else {
-                        corrections.x = 0;
-                        corrections.y += 0.001 * Math.sign(corrections.y);
-                    }
+            // Collides somewhere
 
-                    cancelTargetPosition();
-                }
+            // Assume bottom right
+            if (Math.abs(cright - bleft) < Math.abs(cbot - btop)) {
+                // correct to the right
+                newDelta.x = cright - obj.x;
+            }
+            else {
+                // correct to the bottom
+                newDelta.y = cbot - obj.y;
+            }
         }
     }
 
-    return corrections;
+    return newDelta;
 }
 
 import {ctx, gameToPx} from "./rendering";
@@ -122,12 +128,20 @@ export function movementLoopStep() {
             cancelTargetPosition();
         }
 
-        let corrections = correctCollisions(netDelta);
+        let newDelta = correctCollisions(netDelta);
 
-        if (corrections) {
-            netDelta.x = corrections.x;
-            netDelta.y = corrections.y;
+        if (newDelta.x) {
+            netDelta.x = newDelta.x;
         }
+        if (newDelta.y) {
+            netDelta.y = newDelta.y;
+        }
+
+        ctx.beginPath();
+        ctx.rect(gameToPx(obj.x), gameToPx(obj.y), gameToPx(obj.w), gameToPx(obj.h));
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "orange";
+        ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo(gameToPx(obj.x + obj.w/2), gameToPx(obj.y + obj.h/2));

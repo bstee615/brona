@@ -11,6 +11,12 @@
                 "isDefault": true
             },
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "watch",
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }
