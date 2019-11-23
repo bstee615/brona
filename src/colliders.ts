@@ -1,4 +1,4 @@
-import { SpriteObject } from "./sprite";
+import { SpriteObject } from "./SpriteObject";
 import { Vector } from "./Vector";
 
 export let colliders = [];

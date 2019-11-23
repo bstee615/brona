@@ -1,7 +1,8 @@
 import { correctCollisions } from "./colliders";
 import * as control from "./control";
 import { canvas, pxToGame } from "./rendering";
-import Sprite, { SpriteObject } from "./sprite";
+import Sprite from "./sprite";
+import { SpriteObject } from "./SpriteObject";
 import { Vector } from "./Vector";
 
 // Movement handlers
