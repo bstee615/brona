@@ -1,10 +1,9 @@
 import * as brona from "./brona";
 import { Fader } from "./Fader";
-import { canvas, ctx } from "./rendering";
+import { canvas, ctx, renderObjects } from "./rendering";
 import { spellState } from "./spells";
-import Sprite from "./Sprite";
 import { Tilemap } from "./Tilemap";
-
+import GameObject from "./GameObject";
 
 let forestTiles = new Tilemap("forest_tiles.png", 12, 16, 32);
 
@@ -25,32 +24,23 @@ forestTiles.loadObject(2, 6, "Pit_1_3", 5, 7, 1, 1, true);
 forestTiles.loadObject(2, 7, "Pit_2_3", 6, 7, 1, 1, true);
 forestTiles.loadObject(2, 8, "Pit_3_3", 7, 7, 1, 1, true);
 
-const bg = new Sprite("forest.png");
+let objectsToDraw: Array<GameObject> = [];
 
-let fadeDown = new Fader(0.2, 0.6, 0.01);
-let fadeUp = new Fader(0, 0.6, -0.01);
-let timeScale = new Fader(0.05, 1, -0.1, 0.9);
-fadeUp.value = 0;
-
-function renderObjects() {
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-
-    // Draw background image
-    bg.draw(ctx, 0, 0, canvas.clientWidth, canvas.clientHeight);
-
-    // Draw loaded tiles
+function registerRenderTargets() {
     for (const tile of forestTiles.tiles) {
-        tile.draw(ctx);
+        objectsToDraw.push(tile);
     }
-
-    // Draw Brona
-    brona.obj.draw(ctx);
+    objectsToDraw.push(brona.obj);
 }
 
 function displaySpellInfo() {
     document.getElementById("spell-display").innerHTML = spellState.toString();
 }
+
+let fadeDown = new Fader(0.2, 0.6, 0.01);
+let fadeUp = new Fader(0, 0.6, -0.01);
+let timeScale = new Fader(0.05, 1, -0.1, 0.9);
+fadeUp.value = 0;
 
 function doFadeUp() {
     const originalAlpha = ctx.globalAlpha;
@@ -73,7 +63,7 @@ function doFadeDown() {
 // Main game loop. Only exits from it to switch to a secondary rendering loop.
 function mainLoop() {
     brona.moveBrona(timeScale.value);
-    renderObjects();
+    renderObjects(objectsToDraw);
 
     displaySpellInfo();
 
@@ -92,4 +82,6 @@ function mainLoop() {
 
     window.requestAnimationFrame(mainLoop);
 }
+
+registerRenderTargets();
 mainLoop();
