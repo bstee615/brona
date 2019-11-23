@@ -1,9 +1,11 @@
 export class Fader {
     private range: any;
+    private originalInc: number;
     private inc: number;
     private currentValue: number;
     private accelFactor: number;
     private doneFading: boolean;
+
     get value() {
         return this.currentValue;
     }
@@ -19,6 +21,7 @@ export class Fader {
             max
         };
         this.inc = inc;
+        this.originalInc = inc;
         this.accelFactor = accelFactor;
         this.reset();
     }
@@ -41,6 +44,7 @@ export class Fader {
         }
     }
     reset() {
+        this.inc = this.originalInc;
         if (this.inc > 0) {
             this.currentValue = this.range.min;
         } else {

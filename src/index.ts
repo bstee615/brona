@@ -29,7 +29,7 @@ const bg = new Sprite("forest.png");
 
 let fadeDown = new Fader(0.2, 0.6, 0.01);
 let fadeUp = new Fader(0, 0.6, -0.01);
-let tileScale = new Fader(0.05, 1, -0.1, 0.9);
+let timeScale = new Fader(0.05, 1, -0.1, 0.9);
 fadeUp.value = 0;
 
 function renderObjects() {
@@ -72,7 +72,7 @@ function doFadeDown() {
 
 // Main game loop. Only exits from it to switch to a secondary rendering loop.
 function mainLoop() {
-    brona.moveBrona(1);
+    brona.moveBrona(timeScale.value);
     renderObjects();
 
     displaySpellInfo();
@@ -81,12 +81,13 @@ function mainLoop() {
         doFadeDown();
         fadeUp.reset();
 
-        tileScale.increment();
+        timeScale.increment();
 
         spellState.drawSpell();
     } else {
         doFadeUp();
         fadeDown.reset();
+        timeScale.reset();
     }
 
     window.requestAnimationFrame(mainLoop);
