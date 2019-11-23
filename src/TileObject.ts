@@ -1,4 +1,4 @@
-import GameObject from "./object";
+import GameObject from "./GameObject";
 import { Tilemap } from "./Tilemap";
 
 // Tile stuff
