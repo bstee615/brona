@@ -23,7 +23,7 @@ canvas.addEventListener("mousedown", function(ev) {
 
 canvas.addEventListener("mousemove", function(ev) {
     if (spellState.isCasting && rightMousedown) {
-        spellState.addSpellPoint(new Vector(ev.offsetX, ev.offsetY));
+        spellState.addSpellPoint(new Vector(ev.offsetX, ev.offsetY ));
     }
 });
 
