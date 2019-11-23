@@ -1,6 +1,6 @@
 import { registerCollider } from "./colliders";
 import GameObject from "./object";
-import Sprite from "./sprite";
+import Sprite from "./Sprite";
 
 // Tile stuff
 

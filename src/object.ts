@@ -1,5 +1,5 @@
 import { gameToPx } from "./rendering";
-import Sprite from "./sprite";
+import Sprite from "./Sprite";
 
 export default class GameObject {
     x: number;

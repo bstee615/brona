@@ -2,7 +2,7 @@ import * as brona from "./brona";
 import { Fader } from "./Fader";
 import { canvas, ctx } from "./rendering";
 import { spellState } from "./spells";
-import Sprite from "./sprite";
+import Sprite from "./Sprite";
 import { Tilemap } from "./tiles";
 
 
