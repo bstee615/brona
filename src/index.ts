@@ -3,7 +3,7 @@ import { Fader } from "./Fader";
 import { canvas, ctx } from "./rendering";
 import { spellState } from "./spells";
 import Sprite from "./Sprite";
-import { Tilemap } from "./tiles";
+import { Tilemap } from "./Tilemap";
 
 
 let forestTiles = new Tilemap("forest_tiles.png", 12, 16, 32);
